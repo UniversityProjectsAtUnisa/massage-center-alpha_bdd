@@ -17,22 +17,22 @@ public class Macchinario extends Utils{
     
     @Override
     public String getInsertQuery() {
-    StringBuilder temp = new StringBuilder();
-    temp.append("insert into macchinario(tipo,quantita)");
-    temp.append("values(");
-    temp.append("'").append(tipo).append("',");
-    temp.append(quantita);
-    temp.append(")");
-    return temp.toString();
-  }
+        StringBuilder temp = new StringBuilder();
+        temp.append("insert into macchinario(tipo,quantita)");
+        temp.append("values(");
+        temp.append("'").append(tipo).append("',");
+        temp.append(quantita);
+        temp.append(")");
+        return temp.toString();
+    }
 
     public String getTipo() {
         return tipo;
     }
     
     @Override
-   public String toString() {
-    return tipo + " " + quantita;
-  } 
+    public String toString() {
+        return tipo + " " + quantita;
+    } 
     
 }

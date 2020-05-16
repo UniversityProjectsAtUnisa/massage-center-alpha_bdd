@@ -1,5 +1,6 @@
 package centromassaggi.common;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -7,8 +8,19 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+/*
+    Classe che fornisce vari metodi statici per effettuare query di base.
+*/
 public class Helpers {
 
+    public static final String REGEX_ORA = "^(21:00|(09|1[0-9]|20):[0-5][0-9])$";
+    public static final String REGEX_DATA_COMPLETA = "^(3[01]|[12][0-9]|0[1-9])/(1[0-2]|0[1-9])/20[0-9]{2}$";
+    public static final String REGEX_DATA_ANNO_MESE = "^(1[0-2]|0[1-9])/20[0-9]{2}$";
+
+
+    /*
+        Visualizza in ordine i codici fiscali di tutti i massaggiatori.
+    */
     public static String getMassaggiatori(Statement stm) {
         String s = "";
         try {
@@ -28,7 +40,9 @@ public class Helpers {
         return s;
     }
 
-
+    /*
+        Visualizza in ordine i codici fiscali di tutti i dipendenti.
+    */
     public static String getDipendenti(Statement stm) {
         String s = "";
         try {
@@ -51,7 +65,9 @@ public class Helpers {
         return s;
     }
 
-
+    /*
+        Visualizza tipo, prezzo, durata e nacchinario di tutti i tipi massaggio.
+    */
     public static String getTipiMassaggio(Statement stm) {
         String selectTipiMassaggio = String.format("SELECT Tipo AS TipoMassaggio, Prezzo, Durata, Macchinario FROM TipoMassaggio;");
 
@@ -76,7 +92,9 @@ public class Helpers {
         return result;
     }
 
-    // FIXME: Questa stampa non verrà mai bene
+    /*
+        Visualizza data massaggio, ora inizio, ora fine, tipo massaggio, massaggiatore, sala, prezzo di un massaggio dato un cliente, una data ed un orario.
+    */
     public static String getMassaggio(Statement stm, String cliente, LocalDate data, LocalTime ora) {
         String s = "";
         try {
@@ -102,7 +120,9 @@ public class Helpers {
         return s;
     }
 
-
+    /*
+        Verifica la presenza del tipo dato in input nella tabella tipoMassaggio.
+    */
     public static boolean tipoMassaggioContiene(Statement stm, String tipo) {
 
         String queryTipoMassaggioTipo = String.format(
@@ -116,7 +136,9 @@ public class Helpers {
         }
     }
 
-
+    /*
+        Verifica la presenza del codice fiscale dato in input nella tabella cliente.
+    */
     public static boolean clienteContiene(Statement stm, String codiceFiscale) {
 
         String queryClienteCodiceFiscale = String.format(
@@ -131,8 +153,15 @@ public class Helpers {
 
     }
 
+    /*
+        Inserisce un nuovo cliente, avendo cura di utilizzare una transaction per rispettare il vincolo secondo il quale
+        un cliente deve avere almeno un recapito telefonico.
+        Prende in input codice fiscale, cognome, nome ed una lista di recapiti telefonici da inserire.
+    */
+    public static boolean inserisciCliente(Connection conn, String codiceFiscale, String cognome, String nome, ArrayList<String> recapiti) throws SQLException {
+        conn.setAutoCommit(false);
+        Statement stm = conn.createStatement();
 
-    public static void inserisciCliente(Statement stm, String codiceFiscale, String cognome,String nome, ArrayList<String> recapiti) {
         String insertRecapitoQuery = "insert into recapitocliente(cliente, telefono) values";
         while (!recapiti.isEmpty()) {
             insertRecapitoQuery += String.format("('%s', '%s'),", codiceFiscale, recapiti.remove(0));
@@ -148,6 +177,9 @@ public class Helpers {
         } catch (SQLException ex) {
             System.err.println(ex.getMessage());
         }
+        conn.commit();
+        conn.setAutoCommit(true);
+        return true;
     }
 
 }

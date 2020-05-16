@@ -4,11 +4,23 @@ import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+/*
+    Struttura dati per la gestione delle fasce orarie.
+*/
 public class ListaOrari extends ArrayList<Orario> {
 
-    // Aperto dalle 9 alle 21
+    /*
+        Minimo di preavviso prima di prenotare un massaggio, in minuti.
+    */
+    private static final int MINIMO_PREAVVISO = 10;
+
+    /*
+        Restituisce una lista contenente gli orari di apertura.
+        Se diOggi è true restituisce una lista orari relativo all'orario corrente in quanto saranno poi usati
+        per comunicare all'utente per quale orario è possibile prenotare
+    */
     public static ListaOrari orariDiApertura(boolean diOggi) {
-        if(diOggi) return new ListaOrari().add(LocalTime.now().plusMinutes(10).truncatedTo(ChronoUnit.MINUTES), LocalTime.of(21, 0));
+        if(diOggi) return new ListaOrari().add(LocalTime.now().plusMinutes(MINIMO_PREAVVISO).truncatedTo(ChronoUnit.MINUTES), LocalTime.of(21, 0));
         return new ListaOrari().add(LocalTime.of(9, 0), LocalTime.of(21, 0));
     }
 
@@ -25,6 +37,9 @@ public class ListaOrari extends ArrayList<Orario> {
         return this;
     }
 
+    /* 
+        Classe di appoggio per l'elaborazione degli orari nel metodo sottraiOrari
+    */
     private class OrarioCaratterizzato implements Comparable<OrarioCaratterizzato> {
         LocalTime ora;
         String tipo;

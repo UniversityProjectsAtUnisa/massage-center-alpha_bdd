@@ -11,6 +11,11 @@ import java.time.LocalDate;
 
 public class PopolaDatabase {
 
+    /*
+        Script per il popolamento del database.
+        Vengono sfruttati ArrayList di stringhe in modo da riutilizzare le stesse chiavi primarie
+        senza riottenerle in un secondo momento con query che potrebbero rallentare troppo il popolamento.
+    */
     public static void main(String[] args) {
         Random R = new Random(123);
 

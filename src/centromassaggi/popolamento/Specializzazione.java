@@ -27,4 +27,5 @@ public class Specializzazione extends Utils {
     public String toString() {
         return massaggiatore + " " + tipoMassaggio;
     }
+
 }

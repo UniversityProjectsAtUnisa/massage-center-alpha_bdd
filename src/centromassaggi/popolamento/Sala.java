@@ -32,4 +32,5 @@ public class Sala extends Utils {
     public String toString() {
         return numeroSala + " " + numeroLettini;
     }
+
 }

@@ -13,7 +13,12 @@ import java.time.*;
 import java.util.Iterator;
 
 public class QueryPrenotazione {
-
+    
+    /*
+        Restituisce una ListaOrari che rappresenta le fasce orarie all'interno delle quali non sono disponibili sufficienti macchinari
+        per eseguire il tipo di massaggio richiesto, dati il tipo massaggio ed una data.
+        Qualora il tipo di massaggio non preveda l'uso di un macchinario restituisce una lista di orari vuota. 
+    */
     private static ListaOrari getOrariMacchinariOccupati(Statement stm, String tipoMassaggio, LocalDate data) {
         ListaOrari orariMacchinariOccupati = new ListaOrari();
 
@@ -67,6 +72,11 @@ public class QueryPrenotazione {
         return orariMacchinariOccupati;
     }
 
+
+    /*
+        Restituisce una ListaOrari che rappresta le fasce orarie all'interno delle quali non sono disponibili sufficienti massaggiatori
+        per eseguire un determinato tipo di massaggio dati una data ed il tipo massaggio.
+    */
     private static ListaOrari getOrariMassaggiatoriOccupati(Statement stm, String tipoMassaggio, LocalDate data) {
         ListaOrari orariMassaggiatoriOccupati = new ListaOrari();
         try {
@@ -113,6 +123,10 @@ public class QueryPrenotazione {
         return orariMassaggiatoriOccupati;
     }
 
+    /*
+        Restituisce una ListaOrari che rappresenta le fasce orarie all'interno delle quali non sono disponibili
+        sufficienti lettini per eseguire un massaggio in una certa data.
+    */
     private static ListaOrari getOrariLettiniOccupati(Statement stm, LocalDate data) {
         ListaOrari orariLettiniOccupati = new ListaOrari();
         try {
@@ -156,6 +170,10 @@ public class QueryPrenotazione {
         return orariLettiniOccupati;
     }
 
+    /*
+        Restistuisce una ListaOrari che rappresenta le fasce orarie all'interno delle quali l'utente è già impegnato in altri massaggi
+        dati una data ed un cliente.
+    */
     private static ListaOrari getOrariClienteOccupato(Statement stm, String cliente, LocalDate data) {
         ListaOrari orariClienteOccupato = new ListaOrari();
         try {
@@ -179,6 +197,10 @@ public class QueryPrenotazione {
         return orariClienteOccupato;
     }
 
+    /*
+        Restituisce una ListaOrari che rappresentano le fasce orarie all'interno delle quali può essere prenotato il massaggio
+        da un dato cliente, per un dato giorno di un certo tipo di massaggio.
+    */
     public static ListaOrari getOrariDisponibili(Statement stm, LocalDate data, String tipoMassaggio, String cliente) {
 
         ListaOrari centroMassaggiAperto = ListaOrari.orariDiApertura(data.isEqual(LocalDate.now()));
@@ -198,10 +220,10 @@ public class QueryPrenotazione {
     }
 
     /*
-    Dati una data, un tipo massaggio ed un cliente, si vogliono conoscere le fasce orarie all'interno delle quali è possibile prenotare
-    un massaggio, tenendo conto della possibilità che possano non esserci sufficienti macchinari, massaggiatori in grado di eseguire il
-    tipo massaggio richiesto, lettini liberi (e quindi sale libere), nascondendo anche gli orari per i quali il cliente ha già prenotato
-    un massaggio, compatibilmente con gli orari di apertura del centro massagio
+        Dati una data, un tipo massaggio ed un cliente, si vogliono conoscere le fasce orarie all'interno delle quali è possibile prenotare
+        un massaggio, tenendo conto della possibilità che possano non esserci sufficienti macchinari, massaggiatori in grado di eseguire il
+        tipo massaggio richiesto, lettini liberi (e quindi sale libere), nascondendo anche gli orari per i quali il cliente ha già prenotato
+        un massaggio, compatibilmente con gli orari di apertura del centro massagio
      */
     public static ListaOrari getOrariPrenotabili(Statement stm, LocalDate data, String tipoMassaggio, String cliente) {
         ListaOrari orariDisponibili = getOrariDisponibili(stm, data, tipoMassaggio, cliente);
@@ -220,7 +242,7 @@ public class QueryPrenotazione {
 
 
             Iterator i = orariDisponibili.iterator();
-            while(i.hasNext()){
+            while(i.hasNext()) {
                 Orario o = (Orario) i.next();
                 if (o.getOraFine().compareTo(o.getOraInizio().plusMinutes(durata)) < 0) {
                     i.remove();
@@ -234,7 +256,9 @@ public class QueryPrenotazione {
     }
 
     /*
-        Permette di prenotare un massaggio dati un cliente, un tipo di massaggio, una data, un'ora di inizio del massaggio.
+        Permette di prenotare un massaggio dati un cliente, un tipo di massaggio, una data, un'ora di inizio del massaggio
+        ottenuti in input dall'utente, dopo avergli fornito dati sufficienti ad effettuare la sua scelta.
+        Restituisce una stringa contenente il massaggio prenotato formattato.
     */
     public static String prenotaMassaggio(Connection conn) throws SQLException {
         Statement stm = conn.createStatement();
@@ -243,47 +267,48 @@ public class QueryPrenotazione {
         String ans = "";
         String codiceFiscale = "";
 
-        System.out.print("Sei già un cliente? (s/n): ");
+        System.out.print("Il cliente in questione è già stato inserito in precedenza? (s/n): ");
         while (!ans.equals("s") && !ans.equals("n")) {
             ans = sc.nextLine();
         }
 
         // Se l'utente non è ancora stato inserito nel database lo inserisco
         if (ans.equals("n")) {
-
-            System.out.print("Inserisci il tuo codice fiscale: ");
-            codiceFiscale = sc.nextLine();
-            while(codiceFiscale.length() != 16) {
-                System.out.println("Il codice fiscale deve essere di 16 caratteri. ");
-                System.out.print("Inserisci il tuo codice fiscale: ");
+            boolean utenteInserito = false;
+            while(!utenteInserito){
+                System.out.print("Inserire il tuo codice fiscale: ");
                 codiceFiscale = sc.nextLine();
-            }
-
-            System.out.print("Inserisci il tuo cognome: ");
-            String cognome = sc.nextLine();
-            System.out.print("Inserisci il tuo nome: ");
-            String nome = sc.nextLine();
-            
-            ArrayList<String> recapiti = new ArrayList<>();
-            System.out.println("Inserisci almeno un recapito telefonico, inserire 0 per terminare: ");
-            do {
-                ans = sc.next();
-                if (!ans.equals("0")) {
-                    recapiti.add(ans);
+                while(codiceFiscale.length() != 16) {
+                    System.out.println("Il codice fiscale deve essere di 16 caratteri!");
+                    System.out.print("Inserire il tuo codice fiscale: ");
+                    codiceFiscale = sc.nextLine();
                 }
-                sc.nextLine();
-            } while (!ans.equals("0"));
 
+                System.out.print("Inserire il tuo cognome: ");
+                String cognome = sc.nextLine();
+                System.out.print("Inserire il tuo nome: ");
+                String nome = sc.nextLine();
+                
+                ArrayList<String> recapiti = new ArrayList<>();
+                System.out.println("Inserire almeno un recapito telefonico, inserire 0 per terminare: ");
+                do {
+                    ans = sc.next();
+                    if (!ans.equals("0")) {
+                        recapiti.add(ans);
+                    }
+                    sc.nextLine();
+                } while (!ans.equals("0"));
+                
             
-            conn.setAutoCommit(false);
-
-            Helpers.inserisciCliente(stm, codiceFiscale, cognome, nome, recapiti);
-            conn.commit();
-
-            conn.setAutoCommit(true);
-
+                try {
+                    utenteInserito = Helpers.inserisciCliente(conn, codiceFiscale, cognome, nome, recapiti);
+                } catch (SQLException ex) {
+                    System.out.println("Codice fiscale già esistente. Riprovare.");
+                }
+            }   
+            
         } else {
-            System.out.print("Inserisci il tuo codice fiscale: ");
+            System.out.print("Inserire il tuo codice fiscale: ");
             codiceFiscale = sc.nextLine();
             while (!Helpers.clienteContiene(stm, codiceFiscale)) {
                 System.out.print("Il codice fiscale non esiste, inserire un codice fiscale esistente: ");
@@ -296,17 +321,17 @@ public class QueryPrenotazione {
         LocalDate data;
         do {
             // Chiede la data in cui si vuole prenotare il massaggio
-            System.out.print("Inserisci la data in cui vorresti prenotare un massaggio (formato gg/mm/aaaa): ");
+            System.out.print("Inserire la data in cui vorresti prenotare un massaggio (formato gg/mm/aaaa): ");
             String dataStringa = sc.nextLine();
             // Se la data non è nel formato gg/mm/aaaa o se è una data passata la chiede nuovamente
-            while(!dataStringa.matches("^(3[01]|[12][0-9]|0[1-9])/(1[0-2]|0[1-9])/20[0-9]{2}$")
+            while(!dataStringa.matches(Helpers.REGEX_DATA_COMPLETA)
                     || LocalDate.parse(dataStringa, DateTimeFormatter.ofPattern("dd/MM/yyyy")).isBefore(LocalDate.now())){ 
-                System.out.print("Inserisci una data non passata nel formato corretto (formato gg/mm/aaaa): ");
+                System.out.print("Inserire una data non passata nel formato corretto (formato gg/mm/aaaa): ");
                 dataStringa = sc.nextLine();
             }
             data = LocalDate.parse(dataStringa, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-            System.out.println("Inserisci un tipo massaggio tra quelli che ti verranno mostrati: ");
+            System.out.println("Inserire un tipo massaggio tra quelli che verranno mostrati: ");
             System.out.println(Helpers.getTipiMassaggio(stm));
 
             System.out.print("\nTipo massaggio: ");
@@ -318,27 +343,27 @@ public class QueryPrenotazione {
 
             listaOrariPrenotabili = QueryPrenotazione.getOrariPrenotabili(stm, data, tipoMassaggio, codiceFiscale);
             if (listaOrariPrenotabili.isEmpty()) {
-                System.out.println("Non ci sono orari disponibili nella data richiesta per il tipo massaggio da te scelto.");
+                System.out.println("Non ci sono orari disponibili nella data richiesta per il tipo massaggio richiesto.");
             }
         } while(listaOrariPrenotabili.isEmpty());
         
 
-        System.out.println(String.format("\nDi seguito ti saranno mostrati gli orari per cui "+ 
-                            "puoi prenotare un massaggio di tipo %s in data %s.", tipoMassaggio, data));
+        System.out.println(String.format("\nDi seguito saranno mostrati gli orari per cui "+ 
+                            "si può prenotare un massaggio di tipo %s in data %s.", tipoMassaggio, data));
         System.out.println("NOTA: Il massaggio inizierà all'ora selezionata, "
                         + "ma a seconda della durata, potrebbe protrarsi anche al di fuori degli intervalli suggeriti.");
                         
         System.out.println(listaOrariPrenotabili);
 
 
-        System.out.print("Inserisci l'orario in cui vuoi cominciare il tuo massaggio: ");
+        System.out.print("Inserire l'orario in cui si vuole cominciare il tuo massaggio: ");
         int prenotazioniEffettuate = 0;
         LocalTime ora = null;
         while(prenotazioniEffettuate == 0) {
             try {
                 String oraStringa = sc.nextLine();
-                while(!oraStringa.matches("^(09|1[0-9]|2[0-1]):[0-5][0-9]$")) {
-                    System.out.print("Inserisci l'ora nel formato corretto (formato hh:mm): ");
+                while(!oraStringa.matches(Helpers.REGEX_ORA)) {
+                    System.out.print("Inserire l'ora nel formato corretto (formato hh:mm): ");
                     oraStringa = sc.nextLine();
                 }
                 ora = LocalTime.parse(oraStringa);
@@ -348,7 +373,7 @@ public class QueryPrenotazione {
                 prenotazioniEffettuate = stm.executeUpdate(insertPrenotazioneQuery);
                 System.out.println("Prenotazione effettuata con successo.");
             } catch(SQLException ex){
-                System.out.print("L'orario inserito non era corretto, inserisci un orario tra quelli suggeriti: ");   
+                System.out.print("L'orario inserito non era corretto, inserire un orario tra quelli suggeriti: ");   
             }
         }
 
@@ -356,8 +381,11 @@ public class QueryPrenotazione {
     }
 
 
+    /*
+        Ottiene la connessione al database e la passa al metodo prenotaMassaggio.
+        Poi stampa il massaggio prenotato.
+    */
     public static void main(String[] args) {
-
         try (Connection conn = CustomManager.getConnection()) {
 
             String massaggioPrenotato = QueryPrenotazione.prenotaMassaggio(conn);

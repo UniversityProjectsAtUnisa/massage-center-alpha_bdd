@@ -2,6 +2,10 @@ package centromassaggi.queries;
 
 import java.time.LocalTime;
 
+/* 
+    Classe che rappresenta una fascia oraria sulla quale sono stati 
+    definiti getter, setter e toString.
+*/
 public class Orario {
 
         private LocalTime oraInizio, oraFine;

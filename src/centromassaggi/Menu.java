@@ -14,6 +14,11 @@ import java.util.Scanner;
 
 public class Menu {
 
+    /*
+        Metodo transitorio che si occupa di raccogliere gli input dall'utente.
+        Chiede di scegliere un massaggiatore e di inserire una durata massima e li passa
+        al metodo TreQueries.tipiMassaggioDiDurataMassima che contiene la query vera e propria.
+    */
     public static String tipiMassaggioDiDurataMassima(Connection conn) throws SQLException {
         Statement stm = conn.createStatement();
 
@@ -31,7 +36,11 @@ public class Menu {
         return TreQueries.tipiMassaggioDiDurataMassima(stm, massaggiatore, durataMassima);
     }
 
-
+    /*
+        Metodo transitorio che si occupa di raccogliere gli input dall'utente.
+        Chiede di inserire una data e un intervallo orario e li passa
+        al metodo TreQueries.saleDisponibili che contiene la query vera e propria.
+    */
     public static String saleDisponibili(Connection conn) throws SQLException {
         Statement stm = conn.createStatement();
         
@@ -40,7 +49,7 @@ public class Menu {
         System.out.print("Inserire la data in cui controllare le sale disponibili (formato gg/mm/aaaa): ");
         String dataStringa = sc.nextLine();
         // Se la data non è nel formato gg/mm/aaaa la richiede
-        while(!dataStringa.matches("^(3[01]|[12][0-9]|0[1-9])/(1[0-2]|0[1-9])/20[0-9]{2}$")) {
+        while(!dataStringa.matches(Helpers.REGEX_DATA_COMPLETA)) {
             System.out.print("Inserire la data nel formato corretto (formato gg/mm/aaaa): ");
             dataStringa = sc.nextLine();
         }
@@ -49,16 +58,16 @@ public class Menu {
         System.out.println("\nInserire l'intervallo in cui verificare la disponibilità delle sale");
         System.out.print("Ora iniziale (formato hh:mm): ");
         String oraStringa = sc.nextLine();
-        while(!oraStringa.matches("^(09|1[0-9]|20):[0-5][0-9]$")) {
-            System.out.print("Inserisci un'ora valida (tra le 9:00 e le 21:00 escluse) nel formato corretto (formato hh:mm): ");
+        while(!oraStringa.matches(Helpers.REGEX_ORA)) {
+            System.out.print("L'orario inserito non è valido. Inserire un'ora valida (tra le 09:00 e le 21:00) nel formato corretto (formato hh:mm): ");
             oraStringa = sc.nextLine();
         }
         LocalTime oraInizio = LocalTime.parse(oraStringa);
         
         System.out.print("Ora finale (formato hh:mm): ");
         oraStringa = sc.nextLine();
-        while(!oraStringa.matches("^(09|1[0-9]|2[0-1]):[0-5][0-9]$")) {
-            System.out.print("Inserisci l'ora nel formato corretto (formato hh:mm): ");
+        while(!oraStringa.matches(Helpers.REGEX_ORA)) {
+            System.out.print("Inserire l'ora nel formato corretto (formato hh:mm): ");
             oraStringa = sc.nextLine();
         }
         LocalTime oraFine = LocalTime.parse(oraStringa);
@@ -66,7 +75,11 @@ public class Menu {
         return TreQueries.saleDisponibili(stm, data, oraInizio, oraFine);
     }
 
-
+    /*
+        Metodo transitorio che si occupa di raccogliere gli input dall'utente.
+        Chiede di scegliere un dipendente e di inserire un mese ed un anno e li passa
+        al metodo TreQueries.stipendioDipendente che contiene la query vera e propria.
+    */
     public static String stipendioDipendente(Connection conn) throws SQLException {
         Statement stm = conn.createStatement();
 
@@ -80,7 +93,7 @@ public class Menu {
         System.out.print("Scegliere l'anno ed il mese relativamente ai quali si vuole calcolare lo stipendio (formato mm/aaaa): ");
         String dataStringa = sc.nextLine();
         // Se la data non è nel formato mm/aaaa la richiede
-        while(!dataStringa.matches("^(1[0-2]|0[1-9])/20[0-9]{2}$")) {
+        while(!dataStringa.matches(Helpers.REGEX_DATA_ANNO_MESE)) {
             System.out.print("Inserire la data nel formato corretto (formato mm/aaaa): ");
             dataStringa = sc.nextLine();
         }
@@ -89,13 +102,16 @@ public class Menu {
         return TreQueries.stipendioDipendente(stm, dipendente, data);
     }
 
+    /*
+        Chiede iterativamente (con possibilità di terminazione) di scegliere una tra quattro query possibili.
+        Una volta scelta la query, ne mostra il risultato.
+    */
     public static void main(String[] args) {
         
         try (Connection conn = CustomManager.getConnection()) {
             Scanner sc = new Scanner(System.in);
             int ans;
             do{
-                // TODO: Valutare le difficoltà
                 System.out.println("Scegliere una query: ");
                 System.out.println("1 - Facile. Dati un massaggiatore ed una durata, si vogliono conoscere tutti i tipi di massaggio che "
                                 + "egli è in grado di eseguire e la cui durata non è superiore rispetto a quella data.");

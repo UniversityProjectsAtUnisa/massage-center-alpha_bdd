@@ -42,4 +42,5 @@ public class TipoMassaggio extends Utils {
     public String toString() {
         return tipo + " " + prezzo + " " + macchinario + " " + durata;
     }
+
 }

@@ -106,7 +106,6 @@ public class TreQueries {
             s += String.format("\n%-20s", "Stipendio Dipendente");
             s += "\n--------------------";
             while(rst.next()) {
-                // TODO: è 19?; è 00 dopo la virgola;
                 s += String.format("\n%-20.02f", rst.getDouble("StipendioDipendente"));
             }
             s += "\n--------------------";

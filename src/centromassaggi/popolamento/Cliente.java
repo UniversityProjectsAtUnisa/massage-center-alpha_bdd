@@ -19,18 +19,18 @@ public class Cliente extends Utils{
     
     @Override
     public String getInsertQuery() {
-    StringBuilder temp = new StringBuilder();
-    temp.append("insert into cliente(codicefiscale,cognome,nome)");
-    temp.append("values(");
-    temp.append("'").append(codiceFiscale).append("',");
-    temp.append("'").append(cognome).append("',");
-    temp.append("'").append(nome).append("'");
-    temp.append(")");
-    return temp.toString();
-  }
+        StringBuilder temp = new StringBuilder();
+        temp.append("insert into cliente(codicefiscale,cognome,nome)");
+        temp.append("values(");
+        temp.append("'").append(codiceFiscale).append("',");
+        temp.append("'").append(cognome).append("',");
+        temp.append("'").append(nome).append("'");
+        temp.append(")");
+        return temp.toString();
+    }
     
     @Override
-   public String toString() {
-    return codiceFiscale + " " + cognome + " " + nome;
-  } 
+    public String toString() {
+        return codiceFiscale + " " + cognome + " " + nome;
+    } 
 }

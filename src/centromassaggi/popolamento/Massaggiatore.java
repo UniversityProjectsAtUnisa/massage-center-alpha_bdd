@@ -27,22 +27,22 @@ public class Massaggiatore extends Utils{
     
     @Override
     public String getInsertQuery() {
-    StringBuilder temp = new StringBuilder();
-    temp.append("insert into massaggiatore(codicefiscale,cognome,nome, via, cap, citta, stipendiobase)");
-    temp.append("values(");
-    temp.append("'").append(codiceFiscale).append("',");
-    temp.append("'").append(cognome).append("',");
-    temp.append("'").append(nome).append("',");
-    temp.append("'").append(via).append("',");
-    temp.append("'").append(cap).append("',");
-    temp.append("'").append(citta).append("',");
-    temp.append(stipendioBase);
-    temp.append(")");
-    return temp.toString();
-  }
+        StringBuilder temp = new StringBuilder();
+        temp.append("insert into massaggiatore(codicefiscale,cognome,nome, via, cap, citta, stipendiobase)");
+        temp.append("values(");
+        temp.append("'").append(codiceFiscale).append("',");
+        temp.append("'").append(cognome).append("',");
+        temp.append("'").append(nome).append("',");
+        temp.append("'").append(via).append("',");
+        temp.append("'").append(cap).append("',");
+        temp.append("'").append(citta).append("',");
+        temp.append(stipendioBase);
+        temp.append(")");
+        return temp.toString();
+    }
     
     @Override
-   public String toString() {
-    return codiceFiscale + " " + cognome + " " + nome + " " + via + " " + cap + " " + citta + " " + stipendioBase;
-  } 
+    public String toString() {
+        return codiceFiscale + " " + cognome + " " + nome + " " + via + " " + cap + " " + citta + " " + stipendioBase;
+    } 
 }
