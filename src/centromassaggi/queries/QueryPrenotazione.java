@@ -267,7 +267,7 @@ public class QueryPrenotazione {
         String ans = "";
         String codiceFiscale = "";
 
-        System.out.print("Il cliente in questione è già stato inserito in precedenza? (s/n): ");
+        System.out.print("Il cliente che vuole prenotare un massaggio esiste già? (s/n): ");
         while (!ans.equals("s") && !ans.equals("n")) {
             ans = sc.nextLine();
         }
@@ -276,17 +276,17 @@ public class QueryPrenotazione {
         if (ans.equals("n")) {
             boolean utenteInserito = false;
             while(!utenteInserito){
-                System.out.print("Inserire il tuo codice fiscale: ");
+                System.out.print("Inserire il codice fiscale: ");
                 codiceFiscale = sc.nextLine();
                 while(codiceFiscale.length() != 16) {
                     System.out.println("Il codice fiscale deve essere di 16 caratteri!");
-                    System.out.print("Inserire il tuo codice fiscale: ");
+                    System.out.print("Inserire il codice fiscale: ");
                     codiceFiscale = sc.nextLine();
                 }
 
-                System.out.print("Inserire il tuo cognome: ");
+                System.out.print("Inserire il cognome: ");
                 String cognome = sc.nextLine();
-                System.out.print("Inserire il tuo nome: ");
+                System.out.print("Inserire il nome: ");
                 String nome = sc.nextLine();
                 
                 ArrayList<String> recapiti = new ArrayList<>();
@@ -308,7 +308,7 @@ public class QueryPrenotazione {
             }   
             
         } else {
-            System.out.print("Inserire il tuo codice fiscale: ");
+            System.out.print("Inserire il codice fiscale: ");
             codiceFiscale = sc.nextLine();
             while (!Helpers.clienteContiene(stm, codiceFiscale)) {
                 System.out.print("Il codice fiscale non esiste, inserire un codice fiscale esistente: ");
@@ -371,7 +371,7 @@ public class QueryPrenotazione {
                                                             + "values('%s', '%s', '%s', '%s');",
                                                             codiceFiscale, data, ora, tipoMassaggio);
                 prenotazioniEffettuate = stm.executeUpdate(insertPrenotazioneQuery);
-                System.out.println("Prenotazione effettuata con successo.");
+                System.out.println("\nPrenotazione effettuata con successo.");
             } catch(SQLException ex){
                 System.out.print("L'orario inserito non era corretto, inserire un orario tra quelli suggeriti: ");   
             }
@@ -391,9 +391,9 @@ public class QueryPrenotazione {
             String massaggioPrenotato = QueryPrenotazione.prenotaMassaggio(conn);
             System.out.println(massaggioPrenotato);
             
-        } catch (SQLException ex) {
+        } catch (SQLException | InputMismatchException ex) {
             System.err.println(ex.getMessage());
         }
     }
 
-}
+} 

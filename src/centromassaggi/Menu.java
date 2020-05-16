@@ -85,7 +85,7 @@ public class Menu {
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Scegliere uno tra i seguenti dipendenti:\n");
+        System.out.println("Scegliere uno tra i seguenti dipendenti:");
         System.out.println(Helpers.getDipendenti(stm));
         System.out.print("Dipendente: ");
         String dipendente = sc.nextLine();
@@ -113,11 +113,11 @@ public class Menu {
             int ans;
             do{
                 System.out.println("Scegliere una query: ");
-                System.out.println("1 - Facile. Dati un massaggiatore ed una durata, si vogliono conoscere tutti i tipi di massaggio che "
+                System.out.println(" 1 - Facile. Dati un massaggiatore ed una durata, si vogliono conoscere tutti i tipi di massaggio che "
                                 + "egli è in grado di eseguire e la cui durata non è superiore rispetto a quella data.");
-                System.out.println("2 - Medio. Dati una data, un’ora di inizio ed un’ora di fine si vogliono conoscere i numeri di sala "
+                System.out.println(" 2 - Medio. Dati una data, un’ora di inizio ed un’ora di fine si vogliono conoscere i numeri di sala "
                 + "per tutte le sale in cui è disponibile almeno un lettino.");
-                System.out.println("3 - Difficile. Si vuole calcolare la busta paga di un dipendente a fine mese. "
+                System.out.println(" 3 - Difficile. Si vuole calcolare la busta paga di un dipendente a fine mese. "
                                 + "Se il dipendente in questione è un Receptionist la busta paga corrisponde all'attributo 'Stipendio'; "
                                 + "se il dipendente in questione è un Massaggiatore, la busta paga verrà calcolata come lo stipendio indicato nell'attributo 'StipendioBase' "
                                 + "più il 30% del costo di tutti i massaggi eseguiti durante tale mese.");
